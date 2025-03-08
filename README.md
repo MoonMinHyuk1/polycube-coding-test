@@ -4,8 +4,8 @@
 
 ### 개발
 
-- [ ] Global Exception 설정
-- [ ] user 도메인 설계 및 CRUD 관련 API 구현
+- [x] Global Exception 설정
+- [x] user 도메인 설계 및 생성, 조회, 수정 API 구현
 - [ ] user 관련 필터 구현
 - [ ] 로깅 AOP 구현
 - [ ] 로또 번호 발급 API 구현
@@ -14,7 +14,7 @@
 ### TEST
 
 - [ ] exception 관련 통합 테스트 작성
-- [ ] user CRUD 관련 통합 테스트 작성
+- [ ] user 생성, 조회, 수정 API 관련 통합 테스트 작성
 - [ ] user 필터 관련 통합 테스트 작성
 - [ ] 로또 번호 발급, Batch 관련 통합 테스트 작성
 
@@ -23,6 +23,8 @@
 ### 라이브러리 추가
 
 - runtimeOnly 'com.h2database:h2' : H2 데이터베이스 라이브러리 추가
+- implementation 'org.springframework.boot:spring-boot-starter-data-jpa' : Spring Data JPA 라이브러리 추가
+- implementation 'org.springframework.boot:spring-boot-starter-validation' : Spring Boot 유효성 검증 라이브러리 추가
 
 ## 회고
 
