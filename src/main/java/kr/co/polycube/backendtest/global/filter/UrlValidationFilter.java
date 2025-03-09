@@ -26,6 +26,10 @@ public class UrlValidationFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         String url = httpRequest.getRequestURL().toString();
+        String queryString = httpRequest.getQueryString();
+        if (queryString != null) {
+            url += ("?" + httpRequest.getQueryString());
+        }
 
         if (!PATTERN.matcher(url).matches()) {
             sendJsonErrorResponse(httpResponse);
