@@ -9,7 +9,7 @@
 - [x] URL 관련 필터 구현
 - [x] 로깅 AOP 구현
 - [x] 로또 번호 발급 API 구현
-- [ ] 로또 당첨자 관련 Batch 구현
+- [x] 로또 당첨자 관련 Batch 구현
 
 ### TEST
 
@@ -24,11 +24,14 @@
 
 - runtimeOnly 'com.h2database:h2' : H2 데이터베이스 라이브러리 추가
 - implementation 'org.springframework.boot:spring-boot-starter-data-jpa' : Spring Data JPA 라이브러리 추가
-- implementation 'org.springframework.boot:spring-boot-starter-validation' : Spring Boot 유효성 검증 라이브러리 추가
+- implementation 'org.springframework.boot:spring-boot-starter-validation' : 유효성 검증 라이브러리 추가
+- implementation 'org.springframework.boot:spring-boot-starter-batch' : Spring Batch 라이브러리 추가
 
 ## 회고
 
 - 로또 번호 converter 사용
+- chunk vs tasklet
+- ItemReader, ItemProcessor, ItemWriter를 스프링 빈으로 생성하려 했지만 ItemReader의 경우 처음 리스트를 초기화하고 이후에도 계속 동일한 값으로 사용됨.
 
 # 폴리큐브 백엔드 개발자 코딩 테스트
 
