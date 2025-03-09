@@ -13,10 +13,10 @@
 
 ### TEST
 
-- [ ] exception 관련 통합 테스트 작성
-- [ ] user 생성, 조회, 수정 API 관련 통합 테스트 작성
-- [ ] URL 필터 관련 통합 테스트 작
-- [ ] 로또 번호 발급, Batch 관련 통합 테스트 작성
+- [x] exception 관련 통합 테스트 작성
+- [x] user 생성, 조회, 수정 API 관련 통합 테스트 작성
+- [x] URL 필터 관련 통합 테스트 작성
+- [x] 로또 번호 발급, Batch 관련 통합 테스트 작성
 
 ## 라이브러리 추가
 
@@ -24,6 +24,7 @@
 - implementation 'org.springframework.boot:spring-boot-starter-data-jpa' : Spring Data JPA 라이브러리 추가
 - implementation 'org.springframework.boot:spring-boot-starter-validation' : 요청 시 유효성 검증을 하기 위해 추가
 - implementation 'org.springframework.boot:spring-boot-starter-batch' : Spring Batch 라이브러리 추가
+- testImplementation 'org.springframework.batch:spring-batch-test' : Spring Batch를 테스트하기 위한 라이브러리 추가
 
 ## 프로젝트 설명
 
