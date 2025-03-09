@@ -18,20 +18,69 @@
 - [ ] URL 필터 관련 통합 테스트 작
 - [ ] 로또 번호 발급, Batch 관련 통합 테스트 작성
 
+## 라이브러리 추가
+
+- runtimeOnly 'com.h2database:h2' : H2 데이터베이스를 사용하기 위해 추가
+- implementation 'org.springframework.boot:spring-boot-starter-data-jpa' : Spring Data JPA 라이브러리 추가
+- implementation 'org.springframework.boot:spring-boot-starter-validation' : 요청 시 유효성 검증을 하기 위해 추가
+- implementation 'org.springframework.boot:spring-boot-starter-batch' : Spring Batch 라이브러리 추가
+
 ## 프로젝트 설명
 
-### 라이브러리 추가
+### Global 예외 처리
 
-- runtimeOnly 'com.h2database:h2' : H2 데이터베이스 라이브러리 추가
-- implementation 'org.springframework.boot:spring-boot-starter-data-jpa' : Spring Data JPA 라이브러리 추가
-- implementation 'org.springframework.boot:spring-boot-starter-validation' : 유효성 검증 라이브러리 추가
-- implementation 'org.springframework.boot:spring-boot-starter-batch' : Spring Batch 라이브러리 추가
+- @Valid로 요청 데이터를 검증하여 MethodArgumentNotValidException 예외가 발생하면 HTTP 400 상태와 이유를 응답하도록 설정했습니다.
+- 정의되지 않은 API 요청이 들어오면 발생하는 NoHandlerFoundException 예외를 핸들링해 HTTP 404 상태와 이유를 응답하도록 설정했습니다.
+
+### User
+
+- Spring Data Jpa를 사용해서 생성, 조회, 수정 기능을 구현했습니다.
+- Repository, Service, Controller 계층으로 구성해서 API를 구현했습니다.
+
+### Filter
+
+- '? & = : /'를 제외한 특수문자가 URL에 포함된 경우 접속을 차단합니다.
+- 영소문자, 영대문자, 숫자, '?', '&', '=', ':', '/' 문자들로만 구성된 URL을 허용하도록 설정했습니다.
+- 접속을 차단한다는 것은 HTTP 400 상태와 이유를 응답하는 형태로 구현했습니다.
+
+### Spring AOP
+
+- 컨트롤러의 생성, 조회, 수정 메서드에 진입하기 전에 설정해놓은 로직이 실행되도록 구현했습니다.
+- 컨트롤러 메서드 명과 요청 헤더에 들어있는 User-Agent 값을 console에 출력합니다.
+
+### Lotto
+
+- 중복되지 않는 1 ~ 45 범위의 6개의 숫자를 랜덤으로 생성하는 Util 클래스를 작성했습니다.
+- /lottos POST 요청이 들어온다면 랜덤으로 로또 번호를 생성해서 저장 후 응답하도록 구현했습니다.
+
+### Batch
+
+- 스케줄러를 활용하여 일요일 자정마다 Batch가 실행되도록 설정했습니다.
+- 당첨 번호와 전부 같으면 1등, 다른 숫자가 1개씩 생길때마다 그 다음 등수로 rank를 측정했습니다.
+- 당첨자를 검수하는 Batch Job은 1개의 Step으로 구성했습니다.
+- Chunk 기반으로 데이터를 처리하도록 설정했습니다. 그에 따라 DB에서 데이터를 가져오는 LottoItemReader, 로또 번호의 당첨 여부를 검증하여 당첨자를 반환하는 LottoItemProcessor, 당첨자를 DB에 저장하는 LottoItemWriter를 구현했습니다.
+- Batch 실행 시 필요한 Metadata 테이블을 생성하기 위한 Initializer를 구현했습니다.
 
 ## 회고
 
-- 로또 번호 converter 사용
-- chunk vs tasklet
-- ItemReader, ItemProcessor, ItemWriter를 스프링 빈으로 생성하려 했지만 ItemReader의 경우 처음 리스트를 초기화하고 이후에도 계속 동일한 값으로 사용됨.
+### Lotto (데이터 설계)
+
+- 로또 번호 6개를 저장할 때, 초기엔 Converter를 사용해서 Spring에서는 List 형태로 데이터를 관리하고 DB에서는 ","를 활용해서 관리하려고 했습니다. 하지만, 데이터가 원자성을 지켜야한다는 제1정규화에 위배된다고 생각해서 각 번호를 따로 저장하는 방식을 선택했습니다.
+
+### Lotto (개선할 점)
+
+- 최대한 문제에 기술되어 있는대로 설계했지만, 한 가지 문제가 발생할 수 있을 가능성이 있다고 생각했습니다. Lotto와 Winner는 1:1 관계로 설정했는데, 데이터가 누적된 상태로 배치 프로그램이 실행될 때 이미 당첨에 저장된 로또가 중복 당첨될 수 있다고 생각했습니다. 해결할 수 있는 방법에는 여러가지가 있겠지만, 로또 엔티티에 발급 일시를 넣고, 배치 프로그램이 실행될 때 일주일 전의 데이터만을 가져오는 방법도 좋을 것 같다고 생각했습니다.
+
+### Batch (Chunk vs Tasklet)
+
+- Chunk 기반으로 데이터를 처리할지, Tasklet 기반으로 데이터를 처리할지 고민했습니다. 주로 대량의 데이터를 처리하기 위해선 한번에 처리하는 Tasklet 형식보단 데이터를 나눠서 처리하는 Chunk 형식을 사용하는 것으로 알고 있습니다. 로또 당첨 검증 시스템의 경우, 대량의 사용자가 로또 번호를 발급했을 것이라고 생각했고, 그에 따라 데이터의 개수를 일정하게 나누어 반복적으로 처리해주는 Chunk 형식을 채택해 적용했습니다.
+
+### Batch (ItemReader, ItemProcessor, ItemWriter)
+
+- Chunk 기반으로 데이터를 처리하려면 ItemReader, ItemProcessor, ItemWriter를 구현해야 합니다.
+- LottoItemReader에서는 Job이 실행될 때, DB에 저장된 로또 번호 데이터를 가져와야 합니다. 그리고 해당 데이터는 배치가 실행될 때(매주 일요일 자정)마다 변경될 것입니다. Spring Bean으로 설정하면 Spring Context가 초기화될 때, 데이터가 조회될 것입니다. 하지만 앞서 말했듯이 Job이 실행될때마다 DB에서 조회해야 하므로 @JobScope를 활용하여 Job이 실행될때마다 데이터가 조회되도록 설정했습니다.
+- LottoItemProcessor에서도 비슷한 이유로 @JobScope를 사용했습니다. 당첨 로또 번호는 배치 Job이 실행될때마다 초기화되어야 하므로 @JobScope를 사용했고, 검증하는 로또 번호들과는 동일한 당첨 로또 번호를 비교할 수 있도록 구현했습니다.
+- ItemWriter의 경우는 단순히 입력받은 당첨자(Winner)를 DB에 저장하는 역할만 수행하므로 다른 설정을 해주지 않았습니다.
 
 # 폴리큐브 백엔드 개발자 코딩 테스트
 
