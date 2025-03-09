@@ -30,6 +30,7 @@ public class LottoBatchConfig {
     private final PlatformTransactionManager transactionManager;
 
     private final LottoItemReader lottoItemReader;
+    private final LottoItemProcessor lottoItemProcessor;
     private final LottoItemWriter lottoItemWriter;
 
     @Bean
@@ -41,8 +42,6 @@ public class LottoBatchConfig {
 
     @Bean
     public Step lottoStep() {
-        List<Integer> winningNumbers = LottoNumberGenerator.generateLottoNumbers();
-        LottoItemProcessor lottoItemProcessor = new LottoItemProcessor(winningNumbers);
         return new StepBuilder("lottoStep", jobRepository)
                 .<Lotto, Winner>chunk(10, transactionManager)
                 .reader(lottoItemReader)

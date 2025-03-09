@@ -22,8 +22,7 @@ public class LottoBatchScheduler {
         this.lottoJob = lottoJob;
     }
 
-    @Scheduled(cron = "0 * * * * ?")
-    @Scheduled(cron = "0 0 0 ? * SUN")
+    @Scheduled(cron = "0 0 0 ? * 7")
     public void runLottoJob() {
         try {
             JobParameters params = new JobParametersBuilder()

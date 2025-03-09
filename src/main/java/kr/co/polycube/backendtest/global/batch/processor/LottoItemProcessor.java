@@ -2,19 +2,23 @@ package kr.co.polycube.backendtest.global.batch.processor;
 
 import kr.co.polycube.backendtest.domain.lotto.entity.Lotto;
 import kr.co.polycube.backendtest.domain.winner.entity.Winner;
-import lombok.RequiredArgsConstructor;
+import kr.co.polycube.backendtest.global.util.LottoNumberGenerator;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+@JobScope
+@Component
 public class LottoItemProcessor implements ItemProcessor<Lotto, Winner> {
 
-    private final List<Integer> winningNumbers;
+    private final List<Integer> winningNumbers = LottoNumberGenerator.generateLottoNumbers();
 
     @Override
     public Winner process(Lotto item) throws Exception {
-        List<Integer> lottoNumbers = item.getNumbers();
+        List<Integer> lottoNumbers = item.makeNumbers();
+        System.out.println("winningNumbers = " + winningNumbers);
 
         int count = 0;
         for (int number: winningNumbers) {
