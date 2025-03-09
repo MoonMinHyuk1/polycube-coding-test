@@ -38,17 +38,6 @@ public class Lotto {
     @Column(name = "number_6", nullable = false)
     private Integer number6;
 
-//    @Builder
-//    public Lotto(Integer number1, Integer number2, Integer number3,
-//                 Integer number4, Integer number5, Integer number6) {
-//        this.number1 = number1;
-//        this.number2 = number2;
-//        this.number3 = number3;
-//        this.number4 = number4;
-//        this.number5 = number5;
-//        this.number6 = number6;
-//    }
-
     @Builder
     public Lotto(List<Integer> numbers) {
         this.number1 = numbers.get(0);
@@ -57,5 +46,11 @@ public class Lotto {
         this.number4 = numbers.get(3);
         this.number5 = numbers.get(4);
         this.number6 = numbers.get(5);
+    }
+
+    public List<Integer> getNumbers() {
+        return List.of(
+                number1, number2, number3, number4, number5, number6
+        );
     }
 }
