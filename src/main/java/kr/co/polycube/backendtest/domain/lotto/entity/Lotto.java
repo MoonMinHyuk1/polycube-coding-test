@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Entity
@@ -48,7 +47,7 @@ public class Lotto {
         this.number6 = numbers.get(5);
     }
 
-    public List<Integer> getNumbers() {
+    public List<Integer> makeNumbers() {
         return List.of(
                 number1, number2, number3, number4, number5, number6
         );

@@ -39,12 +39,10 @@ public class UrlValidationFilter implements Filter {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        // JSON 응답 생성
         Map<String, Object> errorResponse = Map.of(
                 "reason", "허용되지 않은 특수문자가 포함되어 있습니다."
         );
 
-        // JSON 변환 후 응답 반환
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }

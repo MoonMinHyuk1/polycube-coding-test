@@ -11,12 +11,8 @@ public record LottoResponseDto(
 ) {
 
     public static LottoResponseDto from(Lotto lotto) {
-        List<Integer> numbers = List.of(
-                lotto.getNumber1(), lotto.getNumber2(), lotto.getNumber3(),
-                lotto.getNumber4(), lotto.getNumber5(), lotto.getNumber6()
-        );
         return LottoResponseDto.builder()
-                .numbers(numbers)
+                .numbers(lotto.makeNumbers())
                 .build();
     }
 }

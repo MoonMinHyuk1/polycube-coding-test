@@ -24,14 +24,14 @@ public class UserService {
 
     public UserResponseDto getUser(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회언입니다."));
         return UserResponseDto.from(user);
     }
 
     @Transactional
     public UserResponseDto updateUser(Long userId, UserRequestDto userRequestDto) {
         User user = userRepository.findById(userId)
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회언입니다."));
         user.updateName(userRequestDto.name());
         return UserResponseDto.from(user);
     }
